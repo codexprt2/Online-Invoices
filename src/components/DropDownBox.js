@@ -7,6 +7,8 @@ import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import { AiTwotoneEdit } from "react-icons/ai";
 import Button from "@material-ui/core/Button";
+import { connect } from "react-redux";
+import { updateCurrency } from "../redux/action";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -24,12 +26,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const DropDownBox = () => {
+const DropDownBox = ({ updateCurrency }) => {
   const classes = useStyles();
-  const [age, setAge] = React.useState("");
+  const [currency, setCurrency] = React.useState("");
 
   const handleChange = (event) => {
-    setAge(event.target.value);
+    setCurrency(event.target.value);
+    updateCurrency(event.target.value);
   };
 
   return (
@@ -43,15 +46,15 @@ const DropDownBox = () => {
             <Select
               labelId="demo-simple-select-filled-label"
               id="demo-simple-select-filled"
-              value={age}
+              value={currency}
               onChange={handleChange}
             >
               <MenuItem value="">
                 <em>None</em>
               </MenuItem>
-              <MenuItem value={10}>USD($)</MenuItem>
-              <MenuItem value={20}>INR</MenuItem>
-              <MenuItem value={30}>EURO</MenuItem>
+              <MenuItem value={"USD"}>USD($)</MenuItem>
+              <MenuItem value={"INR"}>INR</MenuItem>
+              <MenuItem value={"EURO"}>EURO</MenuItem>
             </Select>
           </FormControl>
         </div>
@@ -65,4 +68,10 @@ const DropDownBox = () => {
   );
 };
 
-export default DropDownBox;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    updateCurrency: (val) => dispatch(updateCurrency(val)),
+  };
+};
+
+export default connect(null, mapDispatchToProps)(DropDownBox);

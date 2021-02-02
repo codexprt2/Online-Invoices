@@ -7,10 +7,10 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
-import { AiTwotoneEdit } from "react-icons/ai";
-import { RiDeleteBin5Line } from "react-icons/ri";
 import { Button, Input } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
+import TableInput from "./TableInput";
+// import TableLabel from "./TableLabel";
 
 // import React, { useState, useEffect } from "react";
 
@@ -40,20 +40,9 @@ const useStyles = makeStyles({
 
 const TableComponentHome = () => {
   const classes = useStyles();
-  const [addRow, setAddRow] = useState([]);
+  const [isEdit, setIsEdit] = useState(true);
 
-  const handleInputChange = (index, e) => {
-    const value = [...addRow];
-    value[index][e.target.value] = e.target.value;
-    setAddRow(value);
-  };
-
-  const addNewRow = () => {
-    setAddRow([
-      ...addRow,
-      { itemName: "", Quantity: "", price: "", Discount: "" },
-    ]);
-  };
+  const addNewRow = () => {};
 
   return (
     <div>
@@ -65,51 +54,10 @@ const TableComponentHome = () => {
               <StyledTableCell align="right">Quantity</StyledTableCell>
               <StyledTableCell align="right">Price</StyledTableCell>
               <StyledTableCell align="right">Discount</StyledTableCell>
-              {/*<StyledTableCell align="right">Action</StyledTableCell>*/}
+              <StyledTableCell align="right">Action</StyledTableCell>
             </TableRow>
           </TableHead>
-          <TableBody>
-            {addRow.map((row, index) => (
-              <StyledTableRow key={`${index}`}>
-                <StyledTableCell component="th" scope="row">
-                  <div>
-                    <Input
-                      onChange={(e) => handleInputChange(index, e)}
-                    ></Input>
-                  </div>
-                </StyledTableCell>
-                <StyledTableCell align="right">
-                  <div>
-                    <Input
-                      onChange={(e) => handleInputChange(index, e)}
-                    ></Input>{" "}
-                  </div>{" "}
-                </StyledTableCell>
-                <StyledTableCell align="right">
-                  <div>
-                    <Input
-                      onChange={(e) => handleInputChange(index, e)}
-                    ></Input>{" "}
-                  </div>{" "}
-                </StyledTableCell>
-                <StyledTableCell align="right">
-                  <div>
-                    <Input
-                      onChange={(e) => handleInputChange(index, e)}
-                    ></Input>{" "}
-                  </div>{" "}
-                </StyledTableCell>
-                {/*<StyledTableCell align="right">
-                  <button>
-                    <AiTwotoneEdit />
-                  </button>
-                  <button>
-                    <RiDeleteBin5Line />
-                  </button>
-            </StyledTableCell>*/}
-              </StyledTableRow>
-            ))}
-          </TableBody>
+          <TableBody>{!isEdit ? <TableInput /> : null}</TableBody>
         </Table>
       </TableContainer>
       <div className="create-button">

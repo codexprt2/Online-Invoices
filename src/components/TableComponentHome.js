@@ -9,7 +9,6 @@ import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import { AiOutlineEdit, AiTwotoneEdit } from "react-icons/ai";
 import { RiDeleteBin5Line } from "react-icons/ri";
-import { connect } from "react-redux";
 
 const StyledTableCell = withStyles((theme) => ({
   head: {
@@ -81,12 +80,4 @@ const TableComponentHome = (savedInvoice) => {
   );
 };
 
-const mapStateToProps = (store) => {
-  const { Invoices } = store;
-
-  return {
-    savedInvoice: Invoices.savedInvoice,
-  };
-};
-
-export default connect(mapStateToProps)(TableComponentHome);
+export default TableComponentHome;

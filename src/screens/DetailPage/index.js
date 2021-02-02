@@ -1,18 +1,29 @@
 import React from "react";
 import TableComponentDetailPage from "../../components/TableComponentDetailPage";
-import EditText from "../../components/EditText";
+import CompanyName from "../../components/CompanyName";
 import DropDownBox from "../../components/DropDownBox";
 import SaveBtn from "../../components/SaveBtn";
+import { connect } from "react-redux";
+import InvoiceName from "../../components/InvoiceName";
 
 const detailPage = () => {
   return (
     <div>
       <SaveBtn />
-      <EditText />
+      <CompanyName />
+      <InvoiceName />
       <DropDownBox />
       <TableComponentDetailPage />
     </div>
   );
 };
+const mapStateToProps = (store) => {
+  console.log(store);
+  const { currentInvoice } = store;
 
-export default detailPage;
+  return {
+    currentInvoice: currentInvoice,
+  };
+};
+
+export default connect(mapStateToProps)(detailPage);
