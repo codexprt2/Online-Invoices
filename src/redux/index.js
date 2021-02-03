@@ -1,18 +1,21 @@
 import { UPDATE_COMPANYNAME } from "./type";
 import { UPDATE_INVOICENAME } from "./type";
 import { UPDATE_CURRENCY } from "./type";
+import { ADD_ITEMS } from "./type";
+import { REMOVE_ITEMS } from "./type";
+import { EDIT_ITEMS } from "./type";
 
 const defaultState = {
   savedInvoice: [
     {
-      id: "0",
-      companyName: "qwe",
-      invoiceName: "wsx",
-      currency: "fgh",
+      id: "",
+      companyName: "",
+      invoiceName: "",
+      currency: "",
       items: [
         {
-          itemName: "jsfksj",
-          itemQnty: "djh",
+          itemName: "",
+          itemQnty: "",
           itemPrice: "",
           itemDiscount: "",
         },
@@ -26,14 +29,7 @@ const defaultState = {
     companyName: "",
     invoiceName: "",
     currency: "",
-    items: [
-      {
-        itemName: "",
-        itemQnty: "",
-        itemPrice: "",
-        itemDiscount: "",
-      },
-    ],
+    items: [],
     totalAmount: "",
     totalDiscount: "",
     finalPayableAmount: "",
@@ -41,8 +37,8 @@ const defaultState = {
 };
 
 const invoiceReducer = (state = defaultState, action) => {
-  console.log(state);
-  console.log(action);
+  // console.log(state);
+  // console.log(action);
   switch (action.type) {
     case UPDATE_COMPANYNAME:
       return {
@@ -70,6 +66,45 @@ const invoiceReducer = (state = defaultState, action) => {
           currency: action.payload,
         },
       };
+
+    case ADD_ITEMS:
+      return {
+        ...state,
+        currentInvoice: {
+          ...state.currentInvoice,
+          items: [
+            ...state.currentInvoice.items,
+            { id: state.currentInvoice.items.length + 1, ...action.payload },
+          ],
+          totalAmount: "",
+          totalDiscount: "",
+        },
+      };
+
+    case REMOVE_ITEMS:
+      console.log("action", action.payload);
+      return {
+        ...state,
+        currentInvoice: {
+          ...state.currentInvoice,
+          items: state.currentInvoice.items.filter(
+            (item) => item.id !== action.payload.id
+          ),
+        },
+      };
+
+    case EDIT_ITEMS:
+      const EditItem = state.currentInvoice.items;
+      EditItem[action.payload.id] = action.payload;
+
+      return {
+        ...state,
+        currentInvoice: {
+          ...state.currentInvoice,
+          items: [...EditItem],
+        },
+      };
+
     default:
       return state;
   }

@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import { withStyles, makeStyles } from "@material-ui/core/styles";
+
+import { Button, Input } from "@material-ui/core";
+import AddIcon from "@material-ui/icons/Add";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -7,10 +10,12 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
-import { Button, Input } from "@material-ui/core";
-import AddIcon from "@material-ui/icons/Add";
+import { AiOutlineEdit, AiTwotoneEdit } from "react-icons/ai";
+import { RiDeleteBin5Line } from "react-icons/ri";
+import { connect } from "react-redux";
+import { removeItems } from "../redux/action";
+
 import TableInput from "./TableInput";
-// import TableLabel from "./TableLabel";
 
 // import React, { useState, useEffect } from "react";
 
@@ -38,28 +43,69 @@ const useStyles = makeStyles({
   },
 });
 
-const TableComponentHome = () => {
+const TableLabel = ({ currentInvoice, remove }) => {
+  return (
+    <React.Fragment>
+      {currentInvoice.map((row, index) => (
+        <StyledTableRow key={`${index}`}>
+          <StyledTableCell component="th" scope="row">
+            {row.itemName}
+          </StyledTableCell>
+          <StyledTableCell align="left">{row.itemQnty}</StyledTableCell>
+          <StyledTableCell align="left">{row.itemPrice}</StyledTableCell>
+          <StyledTableCell align="left">{row.itemDiscount}</StyledTableCell>
+          <StyledTableCell align="left">
+            <button>
+              <AiTwotoneEdit />
+            </button>
+            <button onClick={() => remove(row.id)}>
+              <RiDeleteBin5Line />
+            </button>
+          </StyledTableCell>
+        </StyledTableRow>
+      ))}
+    </React.Fragment>
+  );
+};
+const TableComponentDetailPage = ({ currentInvoice, remove }) => {
   const classes = useStyles();
-  const [isEdit, setIsEdit] = useState(true);
+  const [isEdit, setIsEdit] = useState(false);
+  const [items, setItems] = useState([]);
+  const [isOpen, setIsOpen] = useState(false);
 
-  const addNewRow = () => {};
-
+  const toggleEdit = () => {
+    setItems([...currentInvoice]);
+    setIsEdit(!isEdit);
+  };
+  const handleInputRow = () => {
+    setIsOpen(true);
+    setIsEdit(true);
+  };
+  const onEditHandle = () => {
+    setIsOpen(false);
+    setIsEdit(false);
+  };
   return (
     <div>
       <TableContainer component={Paper}>
         <Table className={classes.table} aria-label="customized table">
           <TableHead>
             <TableRow>
-              <StyledTableCell>Item</StyledTableCell>
-              <StyledTableCell align="right">Quantity</StyledTableCell>
-              <StyledTableCell align="right">Price</StyledTableCell>
-              <StyledTableCell align="right">Discount</StyledTableCell>
-              <StyledTableCell align="right">Action</StyledTableCell>
+              <StyledTableCell align="left">Item Name</StyledTableCell>
+              <StyledTableCell align="left">Item Qnty</StyledTableCell>
+              <StyledTableCell align="left">Item Price</StyledTableCell>
+              <StyledTableCell align="left">Item Discount(%) </StyledTableCell>
+              <StyledTableCell align="left">Action</StyledTableCell>
             </TableRow>
           </TableHead>
-          <TableBody>{!isEdit ? <TableInput /> : null}</TableBody>
+          <TableBody>
+            <TableLabel currentInvoice={currentInvoice} remove={remove} />
+
+            {isEdit ? <TableInput onEditHandle={onEditHandle} /> : null}
+          </TableBody>
         </Table>
       </TableContainer>
+
       <div className="create-button">
         <Button
           variant="contained"
@@ -67,7 +113,7 @@ const TableComponentHome = () => {
           size="large"
           className={classes.button}
           startIcon={<AddIcon />}
-          onClick={addNewRow}
+          onClick={handleInputRow}
         >
           ADD
         </Button>
@@ -75,5 +121,21 @@ const TableComponentHome = () => {
     </div>
   );
 };
+const mapStateToProps = (store) => {
+  const { currentInvoice } = store;
 
-export default TableComponentHome;
+  return {
+    currentInvoice: currentInvoice.items,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    remove: (id) => dispatch(removeItems(id)),
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(TableComponentDetailPage);

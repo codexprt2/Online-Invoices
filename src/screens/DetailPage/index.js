@@ -5,6 +5,7 @@ import DropDownBox from "../../components/DropDownBox";
 import SaveBtn from "../../components/SaveBtn";
 import { connect } from "react-redux";
 import InvoiceName from "../../components/InvoiceName";
+import ItemsCalculator from "../../components/ItemsCalculator";
 
 const detailPage = () => {
   return (
@@ -14,6 +15,7 @@ const detailPage = () => {
       <InvoiceName />
       <DropDownBox />
       <TableComponentDetailPage />
+      <ItemsCalculator />
     </div>
   );
 };

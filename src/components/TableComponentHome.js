@@ -9,6 +9,7 @@ import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import { AiOutlineEdit, AiTwotoneEdit } from "react-icons/ai";
 import { RiDeleteBin5Line } from "react-icons/ri";
+import { connect } from "react-redux";
 
 const StyledTableCell = withStyles((theme) => ({
   head: {
@@ -32,7 +33,7 @@ function createData(id, companyName, invoiceName, currency, action) {
   return { id, companyName, invoiceName, currency, action };
 }
 
-const rows = [createData(1, "codexprt", "january21", "USD", 4.0)];
+// const rows = [createData(1, "codexprt", "january21", "USD", 4.0)];
 
 const useStyles = makeStyles({
   table: {
@@ -40,7 +41,8 @@ const useStyles = makeStyles({
   },
 });
 
-const TableComponentHome = (savedInvoice) => {
+const TableComponentHome = ({ savedInvoice }) => {
+  // console.log("savedInvoice......", savedInvoice);
   const classes = useStyles();
 
   return (
@@ -56,7 +58,7 @@ const TableComponentHome = (savedInvoice) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
+          {savedInvoice.map((row) => (
             <StyledTableRow key={row.id}>
               <StyledTableCell component="th" scope="row">
                 {row.id}
@@ -80,4 +82,12 @@ const TableComponentHome = (savedInvoice) => {
   );
 };
 
-export default TableComponentHome;
+const mapStateToProps = (store) => {
+  const { savedInvoice } = store;
+
+  return {
+    savedInvoice: savedInvoice,
+  };
+};
+
+export default connect(mapStateToProps, null)(TableComponentHome);

@@ -6,6 +6,8 @@ import TableRow from "@material-ui/core/TableRow";
 
 import { IoMdDoneAll } from "react-icons/io";
 import { Button, Input } from "@material-ui/core";
+import { connect } from "react-redux";
+import { addItems } from "../redux/action";
 
 const StyledTableCell = withStyles((theme) => ({
   head: {
@@ -31,66 +33,46 @@ const useStyles = makeStyles({
   },
 });
 
-const TableInput = () => {
-  const [addRow, setAddRow] = useState([]);
+const TableInput = ({ addItems, onEditHandle }) => {
+  const [item, setItem] = useState([]);
 
   const handleInputChange = (e) => {
-    // const value = [...addRow];
-    // value = ;
-
-    setAddRow({ ...addRow, [e.target.name]: e.target.value });
-    console.log(addRow);
+    setItem({ ...item, [e.target.name]: e.target.value });
   };
   const handleClick = () => {
-    setAddRow([
-      ...addRow,
-      { itemName: "", Quantity: "", price: "", Discount: "" },
-    ]);
+    addItems(item);
+    onEditHandle(item);
   };
 
   return (
-    <div>
-      <TableRow>
+    <React.Fragment>
+      <StyledTableRow>
         <StyledTableCell component="th" scope="row">
-          <div>
-            <Input
-              onChange={handleInputChange}
-              name="itemName"
-              placeholder="Item Name"
-            ></Input>
-          </div>
+          <Input name="itemName" onChange={handleInputChange}></Input>
         </StyledTableCell>
-        <StyledTableCell align="right">
-          <div>
-            <Input onChange={handleInputChange} placeholder="Quantity"></Input>{" "}
-          </div>{" "}
+        <StyledTableCell align="left">
+          <Input name="itemQnty" onChange={handleInputChange}></Input>
         </StyledTableCell>
-        <StyledTableCell align="right">
-          <div>
-            <Input
-              onChange={handleInputChange}
-              name="price"
-              placeholder="Price"
-            ></Input>{" "}
-          </div>{" "}
+        <StyledTableCell align="left">
+          <Input name="itemPrice" onChange={handleInputChange}></Input>
         </StyledTableCell>
-        <StyledTableCell align="right">
-          <div>
-            <Input
-              onChange={handleInputChange}
-              name="discount"
-              placeholder="Discount"
-            ></Input>{" "}
-          </div>{" "}
+        <StyledTableCell align="left">
+          <Input name="itemDiscount" onChange={handleInputChange}></Input>
         </StyledTableCell>
-        <StyledTableCell align="right">
+        <StyledTableCell align="left">
           <Button onClick={handleClick}>
             <IoMdDoneAll />
           </Button>
         </StyledTableCell>
-      </TableRow>
-    </div>
+      </StyledTableRow>
+    </React.Fragment>
   );
 };
 
-export default TableInput;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    addItems: (data) => dispatch(addItems(data)),
+  };
+};
+
+export default connect(null, mapDispatchToProps)(TableInput);
