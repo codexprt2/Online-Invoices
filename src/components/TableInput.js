@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { withStyles, makeStyles } from "@material-ui/core/styles";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -33,7 +33,7 @@ const useStyles = makeStyles({
   },
 });
 
-const TableInput = ({ addItems, onEditHandle }) => {
+const TableInput = ({ addItems, onEditHandle, currentInvoice }) => {
   const [item, setItem] = useState([]);
 
   const handleInputChange = (e) => {
@@ -68,6 +68,13 @@ const TableInput = ({ addItems, onEditHandle }) => {
     </React.Fragment>
   );
 };
+const mapStateToProps = (store) => {
+  const { currentInvoice } = store;
+
+  return {
+    currentInvoice: currentInvoice.items,
+  };
+};
 
 const mapDispatchToProps = (dispatch) => {
   return {
@@ -75,4 +82,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(null, mapDispatchToProps)(TableInput);
+export default connect(mapStateToProps, mapDispatchToProps)(TableInput);

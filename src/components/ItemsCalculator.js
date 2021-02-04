@@ -1,27 +1,18 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
 
-const ItemsCalculator = ({ currentInvoiceItem }) => {
-  const calculations = currentInvoiceItem.reduce(
-    (acc, curr) => {
-      return {
-        totalAmount: acc.totalAmount + curr.itemQnty * curr.itemPrice,
-        discount: acc.discount + (curr.itemPrice * curr.itemDiscount) / 100,
-      };
-    },
-    { totalAmount: 0, discount: 0 }
-  );
-
-  console.log("calculations : ", calculations);
-
+const ItemsCalculator = ({
+  currentInvoiceItem,
+  totalAmount,
+  totalDiscount,
+  finalPayableAmount,
+}) => {
   return (
     <div>
       <div>Total Items:{currentInvoiceItem.length}</div>
-      <div>Total Amount:{calculations.totalAmount}</div>
-      <div>Total Discount: {calculations.discount}</div>
-      <div>
-        Final Payable Amount: {calculations.totalAmount - calculations.discount}
-      </div>
+      <div>Total Amount:{totalAmount}</div>
+      <div>Total Discount:{totalDiscount} </div>
+      <div>Final Payable Amount:{finalPayableAmount}</div>
     </div>
   );
 };
@@ -31,6 +22,9 @@ const mapStateToProps = (store) => {
 
   return {
     currentInvoiceItem: currentInvoice.items,
+    totalAmount: currentInvoice.totalAmount,
+    totalDiscount: currentInvoice.totalDiscount,
+    finalPayableAmount: currentInvoice.finalPayableAmount,
   };
 };
 

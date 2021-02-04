@@ -1,30 +1,23 @@
-import { UPDATE_COMPANYNAME } from "./type";
+import { DELETE_INVOICE, UPDATE_COMPANYNAME } from "./type";
 import { UPDATE_INVOICENAME } from "./type";
 import { UPDATE_CURRENCY } from "./type";
 import { ADD_ITEMS } from "./type";
 import { REMOVE_ITEMS } from "./type";
 import { EDIT_ITEMS } from "./type";
+import { SAVE_INVOICE, SAVE_TO_CURRENT } from "./type";
+
+const defaultCurrentInvoice = {
+  companyName: "",
+  invoiceName: "",
+  currency: "",
+  items: [],
+  totalAmount: 0,
+  totalDiscount: 0,
+  finalPayableAmount: 0,
+};
 
 const defaultState = {
-  savedInvoice: [
-    {
-      id: "",
-      companyName: "",
-      invoiceName: "",
-      currency: "",
-      items: [
-        {
-          itemName: "",
-          itemQnty: "",
-          itemPrice: "",
-          itemDiscount: "",
-        },
-      ],
-      totalAmount: "",
-      totalDiscount: "",
-      finalPayableAmount: "",
-    },
-  ],
+  savedInvoice: [],
   currentInvoice: {
     companyName: "",
     invoiceName: "",
@@ -68,30 +61,55 @@ const invoiceReducer = (state = defaultState, action) => {
       };
 
     case ADD_ITEMS:
+      const newItemsValue = [
+        ...state.currentInvoice.items,
+        { id: state.currentInvoice.items.length + 1, ...action.payload },
+      ];
+      const calculations = newItemsValue.reduce(
+        (acc, curr) => {
+          return {
+            totalAmount: acc.totalAmount + curr.itemQnty * curr.itemPrice,
+            discount: acc.discount + (curr.itemPrice * curr.itemDiscount) / 100,
+          };
+        },
+        { totalAmount: 0, discount: 0 }
+      );
+
       return {
         ...state,
         currentInvoice: {
           ...state.currentInvoice,
-          items: [
-            ...state.currentInvoice.items,
-            { id: state.currentInvoice.items.length + 1, ...action.payload },
-          ],
-          totalAmount: "",
-          totalDiscount: "",
+          items: newItemsValue,
+          totalAmount: calculations.totalAmount,
+          totalDiscount: calculations.discount,
+          finalPayableAmount: calculations.totalAmount - calculations.discount,
         },
       };
 
-    case REMOVE_ITEMS:
-      console.log("action", action.payload);
+    case REMOVE_ITEMS: {
+      const deletedItems = state.currentInvoice.items.filter(
+        (item) => item.id !== action.payload.id
+      );
+      const calculations = deletedItems.reduce(
+        (acc, curr) => {
+          return {
+            totalAmount: acc.totalAmount + curr.itemQnty * curr.itemPrice,
+            discount: acc.discount + (curr.itemPrice * curr.itemDiscount) / 100,
+          };
+        },
+        { totalAmount: 0, discount: 0 }
+      );
       return {
         ...state,
         currentInvoice: {
           ...state.currentInvoice,
-          items: state.currentInvoice.items.filter(
-            (item) => item.id !== action.payload.id
-          ),
+          items: deletedItems,
+          totalAmount: calculations.totalAmount,
+          totalDiscount: calculations.discount,
+          finalPayableAmount: calculations.totalAmount - calculations.discount,
         },
       };
+    }
 
     case EDIT_ITEMS:
       const EditItem = state.currentInvoice.items;
@@ -105,6 +123,37 @@ const invoiceReducer = (state = defaultState, action) => {
         },
       };
 
+    case SAVE_INVOICE:
+      return {
+        ...state,
+        savedInvoice: [
+          ...state.savedInvoice,
+          {
+            id: state.savedInvoice.length + 1,
+            ...state.currentInvoice,
+          },
+        ],
+        currentInvoice: defaultCurrentInvoice,
+      };
+
+    case DELETE_INVOICE:
+      return {
+        ...state,
+        savedInvoice: state.savedInvoice.filter(
+          (obj) => obj.id !== action.payload
+        ),
+      };
+
+    case SAVE_TO_CURRENT:
+      const seletedItems = state.savedInvoice.filter(
+        (item) => item.id === action.payload
+      );
+
+      console.log("selectedItems....", seletedItems[0]);
+      return {
+        ...state,
+        currentInvoice: { ...state.currentInvoice, ...seletedItems[0] },
+      };
     default:
       return state;
   }

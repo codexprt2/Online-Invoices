@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { withStyles, makeStyles } from "@material-ui/core/styles";
 
 import { Button, Input } from "@material-ui/core";
@@ -10,14 +10,12 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
-import { AiOutlineEdit, AiTwotoneEdit } from "react-icons/ai";
-import { RiDeleteBin5Line } from "react-icons/ri";
+import { AiTwotoneEdit } from "react-icons/ai";
+import { RiDeleteBin5Line, RiTruckLine } from "react-icons/ri";
 import { connect } from "react-redux";
 import { removeItems } from "../redux/action";
 
 import TableInput from "./TableInput";
-
-// import React, { useState, useEffect } from "react";
 
 const StyledTableCell = withStyles((theme) => ({
   head: {
@@ -43,7 +41,7 @@ const useStyles = makeStyles({
   },
 });
 
-const TableLabel = ({ currentInvoice, remove }) => {
+const TableLabel = ({ currentInvoice, remove, handleEdit }) => {
   return (
     <React.Fragment>
       {currentInvoice.map((row, index) => (
@@ -56,7 +54,7 @@ const TableLabel = ({ currentInvoice, remove }) => {
           <StyledTableCell align="left">{row.itemDiscount}</StyledTableCell>
           <StyledTableCell align="left">
             <button>
-              <AiTwotoneEdit />
+              <AiTwotoneEdit onClick={handleEdit} />
             </button>
             <button onClick={() => remove(row.id)}>
               <RiDeleteBin5Line />
@@ -85,6 +83,11 @@ const TableComponentDetailPage = ({ currentInvoice, remove }) => {
     setIsOpen(false);
     setIsEdit(false);
   };
+
+  const handleEdit = () => {
+    setIsEdit(true);
+  };
+
   return (
     <div>
       <TableContainer component={Paper}>
@@ -99,7 +102,11 @@ const TableComponentDetailPage = ({ currentInvoice, remove }) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            <TableLabel currentInvoice={currentInvoice} remove={remove} />
+            <TableLabel
+              currentInvoice={currentInvoice}
+              remove={remove}
+              handleEdit={handleEdit}
+            />
 
             {isEdit ? <TableInput onEditHandle={onEditHandle} /> : null}
           </TableBody>
